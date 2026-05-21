@@ -66,6 +66,8 @@
 
       "Bash(curl:*)",
 
+      "Bash(bash scripts/verify/:*)",
+
       "WebFetch(domain:docs.python.org)",
       "WebFetch(domain:fastapi.tiangolo.com)",
       "WebFetch(domain:docs.sqlalchemy.org)",
@@ -116,6 +118,19 @@
       "Bash(gh:*)"
     ],
     "additionalDirectories": []
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/scripts/hooks/guard-destructive.sh\""
+          }
+        ]
+      }
+    ]
   },
   "enableAllProjectMcpServers": false,
   "outputStyle": "default"

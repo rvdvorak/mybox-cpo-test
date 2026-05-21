@@ -1,0 +1,23 @@
+# Verification-only compose override — deterministic faults for E2E checks.
+#
+# Layered over docker-compose.yml ONLY by scripts/verify/*.sh, via the dedicated
+# `cpo-verify` compose project (see scripts/verify/_lib.sh `dcv`). The base
+# docker-compose.yml is never modified — station-3 keeps FAULT_PROBABILITY=0.30
+# there for the README manual fault demo.
+#
+# Probabilistic faults (architektura 9.2) are non-deterministic; verification
+# needs binary PASS/FAIL. So here the fault probability is pinned:
+#   station-1 -> 0.0  guaranteed NO fault  — clean happy-path session tests
+#   station-3 -> 1.0  guaranteed fault on the first Charging meter tick (~5 s)
+#
+# The `environment` mapping merges key-by-key with the base, so only
+# FAULT_PROBABILITY is overridden; STATION_ID, MAX_POWER_KW etc. are inherited.
+
+services:
+  station-1:
+    environment:
+      FAULT_PROBABILITY: "0.0"
+
+  station-3:
+    environment:
+      FAULT_PROBABILITY: "1.0"
