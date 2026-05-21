@@ -23,6 +23,8 @@ class BackendConfig:
     # Heartbeat age after which the offline detector marks a station Offline
     # (architektura 3.5).
     heartbeat_timeout_sec: int
+    # Frontend port — used to build the allowed CORS origin (architektura 7).
+    frontend_port: int
 
     @classmethod
     def from_env(cls) -> "BackendConfig":
@@ -42,9 +44,8 @@ class BackendConfig:
             backend_port=int(os.environ.get("BACKEND_PORT", "3000")),
             mqtt_host=os.environ.get("MQTT_HOST", "mosquitto"),
             mqtt_port=int(os.environ.get("MQTT_PORT", "1883")),
-            heartbeat_timeout_sec=int(
-                os.environ.get("HEARTBEAT_TIMEOUT_SEC", "90")
-            ),
+            heartbeat_timeout_sec=int(os.environ.get("HEARTBEAT_TIMEOUT_SEC", "90")),
+            frontend_port=int(os.environ.get("FRONTEND_PORT", "8080")),
         )
 
     @property
@@ -54,3 +55,8 @@ class BackendConfig:
             f"postgresql+asyncpg://{self.db_user}:{self.db_password}"
             f"@{self.db_host}:{self.db_port}/{self.db_name}"
         )
+
+    @property
+    def cors_origin(self) -> str:
+        """Allowed browser origin for the frontend SPA (architektura 7)."""
+        return f"http://localhost:{self.frontend_port}"

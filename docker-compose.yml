@@ -55,6 +55,8 @@ services:
       MQTT_HOST: mosquitto
       MQTT_PORT: 1883
       HEARTBEAT_TIMEOUT_SEC: 90
+      # Origin allowed by the backend's CORS policy (architektura 7).
+      FRONTEND_PORT: 8080
     ports:
       - "3000:3000"
     networks:

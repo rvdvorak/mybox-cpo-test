@@ -476,9 +476,18 @@ data: {"transaction_id":"...","station_id":"ST-001"}
 
 event: session_ended
 data: {"transaction_id":"...","station_id":"ST-001","end_reason":"completed"}
+
+event: heartbeat
+data: {"station_id":"ST-001","ts":"..."}
 ```
 
 Frontend konzumuje přes `EventSource`. Žádná autentizace v MVP.
+
+`heartbeat` event byl doplněn ve Fázi 5 (schválená odchylka od původních čtyř
+eventů, plan mode). Dashboard (sekce 8.3) zobrazuje „Last heartbeat“ jako
+relative time a nemá polling — bez tohoto eventu by idle stanice po initial
+loadu nedostala žádný update. `ts` je čas přijetí heartbeatu backendem, totožný
+s hodnotou v `GET /api/stations`.
 
 ---
 

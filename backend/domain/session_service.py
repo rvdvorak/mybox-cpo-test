@@ -41,11 +41,15 @@ class SessionService:
         transaction_id: str,
         start_time: datetime,
         start_meter_wh: int,
-    ) -> Session:
-        """Open a charging session (called by the REST adapter on POST /start).
+    ) -> tuple[Session, bool]:
+        """Open a charging session, driven by the MQTT ``status: Charging`` event.
 
         Idempotent (architektura 7.4): if a session with ``transaction_id``
         already exists, it is returned unchanged instead of inserting a duplicate.
+
+        Returns ``(session, created)`` — ``created`` is ``True`` only for a
+        genuinely new row, so the adapter can emit ``session_started`` once and
+        not re-emit on a retained-status replay (architektura 7.6).
         """
         existing = await db.scalar(
             select(Session).where(Session.transaction_id == transaction_id)
@@ -55,7 +59,7 @@ class SessionService:
                 "start_session: transaction %s already exists, returning it",
                 transaction_id,
             )
-            return existing
+            return existing, False
 
         session = Session(
             id=uuid.uuid4(),
@@ -67,7 +71,7 @@ class SessionService:
         db.add(session)
         await db.flush()
         logger.info("Started session %s on station %s", transaction_id, station_id)
-        return session
+        return session, True
 
     async def apply_meter_reading(
         self, db: AsyncSession, event: MeterReadingEvent
@@ -203,9 +207,9 @@ class SessionService:
         deterministically. The formula is applied literally; a negative delta
         (simulator meter reset, architektura 9.3) is not clamped.
         """
-        total_kwh = (
-            Decimal(end_meter_wh - start_meter_wh) / Decimal(1000)
-        ).quantize(Decimal("0.001"), rounding=ROUND_HALF_UP)
+        total_kwh = (Decimal(end_meter_wh - start_meter_wh) / Decimal(1000)).quantize(
+            Decimal("0.001"), rounding=ROUND_HALF_UP
+        )
         total_cost = self._pricing.cost_for_kwh(total_kwh).quantize(
             Decimal("0.01"), rounding=ROUND_HALF_UP
         )
