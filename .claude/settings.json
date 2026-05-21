@@ -1,10 +1,12 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
+    "defaultMode": "plan",
     "allow": [
-      "Read(**)",
-      "Edit(**)",
-      "Write(**)",
+      "Read(/**)",
+      "Edit(/**)",
+      "Write(/**)",
+
       "Bash(ls:*)",
       "Bash(cat:*)",
       "Bash(find:*)",
@@ -17,14 +19,17 @@
       "Bash(file:*)",
       "Bash(stat:*)",
       "Bash(pwd)",
+      "Bash(test:*)",
+      "Bash(echo:*)",
+      "Bash(printf:*)",
+
       "Bash(mkdir:*)",
       "Bash(touch:*)",
       "Bash(cp:*)",
       "Bash(mv:*)",
-      "Bash(echo:*)",
-      "Bash(printf:*)",
-      "Bash(test:*)",
+
       "Bash(git:*)",
+
       "Bash(docker compose:*)",
       "Bash(docker ps)",
       "Bash(docker ps:*)",
@@ -35,22 +40,36 @@
       "Bash(docker exec:*)",
       "Bash(docker network:*)",
       "Bash(docker volume:*)",
+      "Bash(docker build:*)",
+      "Bash(docker stop:*)",
+      "Bash(docker start:*)",
+      "Bash(docker restart:*)",
+      "Bash(docker rm:*)",
+      "Bash(docker kill:*)",
+
       "Bash(mosquitto_sub:*)",
       "Bash(mosquitto_pub:*)",
+
       "Bash(python:*)",
       "Bash(python3:*)",
       "Bash(pip:*)",
       "Bash(pip3:*)",
       "Bash(ruff:*)",
       "Bash(uvicorn:*)",
+
       "Bash(node:*)",
       "Bash(npm:*)",
       "Bash(npx:*)",
+
       "Bash(psql:*)",
+      "Bash(pg_isready:*)",
+
+      "Bash(curl:*)",
+
       "WebFetch(domain:docs.python.org)",
       "WebFetch(domain:fastapi.tiangolo.com)",
       "WebFetch(domain:docs.sqlalchemy.org)",
-      "WebFetch(domain:sbtinstruments.github.io)",
+      "WebFetch(domain:aiomqtt.felixboehm.dev)",
       "WebFetch(domain:mosquitto.org)",
       "WebFetch(domain:react.dev)",
       "WebFetch(domain:vite.dev)",
@@ -58,41 +77,44 @@
       "WebFetch(domain:recharts.org)",
       "WebFetch(domain:typescriptlang.org)",
       "WebFetch(domain:developer.mozilla.org)",
-      "WebFetch(domain:tabler.io)"
+      "WebFetch(domain:tabler.io)",
+      "WebFetch(domain:docs.docker.com)",
+      "WebFetch(domain:pypi.org)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:nodejs.org)"
     ],
     "deny": [
-      "Read(.env)",
-      "Read(**/.env)",
-      "Read(.env.local)",
-      "Read(**/.env.local)",
       "Read(~/.claude/.credentials.json)",
       "Read(~/.git-credentials)",
       "Read(~/.ssh/**)",
       "Read(~/.gnupg/**)",
-      "Edit(.env)",
-      "Edit(**/.env)",
       "Edit(~/.claude/**)",
       "Edit(~/.git-credentials)",
       "Edit(~/.ssh/**)",
-      "Write(.env)",
-      "Write(**/.env)",
       "Write(~/.claude/**)",
+
       "Bash(sudo:*)",
       "Bash(rm -rf:*)",
+
       "Bash(qvm-*)",
       "Bash(qubes-*)",
+
       "Bash(ssh:*)",
       "Bash(scp:*)",
       "Bash(rsync:*)",
-      "Bash(curl:*)",
-      "Bash(wget:*)",
       "Bash(nc:*)",
       "Bash(ncat:*)",
       "Bash(netcat:*)",
+      "Bash(wget:*)",
+
       "Bash(git push:*)",
       "Bash(git pull:*)",
       "Bash(git fetch:*)",
       "Bash(git remote:*)",
+      "Bash(git commit:*)",
+      "Bash(git add:*)",
+      "Bash(git reset:*)",
+      "Bash(git rebase:*)",
       "Bash(gh:*)"
     ],
     "additionalDirectories": []
