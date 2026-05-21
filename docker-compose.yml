@@ -4,6 +4,10 @@ x-station-common: &station-common
     context: ./simulator
   networks:
     - cpo-net
+  # Stations need the broker before they can connect / publish (architektura 9).
+  depends_on:
+    mosquitto:
+      condition: service_healthy
 
 # ENV common to every station; per-service overrides follow (architektura 10.1).
 x-station-env: &station-env
@@ -25,6 +29,14 @@ services:
       - mosquitto-log:/mosquitto/log
     networks:
       - cpo-net
+    # Anonymous publish proves the broker accepts connections on 1883
+    # (allow_anonymous true, architektura 3.7). mosquitto_pub ships in the image.
+    healthcheck:
+      test: ["CMD", "mosquitto_pub", "-h", "localhost", "-t", "healthcheck", "-m", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   db:
     # PostgreSQL — clean, no TimescaleDB in MVP (architektura sekce 2, 6).
@@ -33,17 +45,33 @@ services:
       POSTGRES_DB: cpo
       POSTGRES_USER: cpo
       POSTGRES_PASSWORD: cpo
+      # Explicit data dir — the named volume mounts exactly here. Set explicitly
+      # rather than assuming the image default (postgres 18 layout, Phase 7).
+      PGDATA: /var/lib/postgresql/data
     ports:
       - "5432:5432"
+    volumes:
+      - cpo-db-data:/var/lib/postgresql/data
     networks:
       - cpo-net
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "cpo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   backend:
     # FastAPI backend — domain layer + DB schema + MQTT adapter
     # (architektura sekce 3, 5, 6).
-    # healthchecks / depends_on / volumes are finalized in Phase 7.
     build:
       context: ./backend
+    # Backend connects to both the broker and the DB on startup; wait for both.
+    depends_on:
+      mosquitto:
+        condition: service_healthy
+      db:
+        condition: service_healthy
     environment:
       DB_HOST: db
       DB_PORT: 5432
@@ -61,12 +89,24 @@ services:
       - "3000:3000"
     networks:
       - cpo-net
+    # GET /api/stations -> 200 confirms the API serves AND the DB is reachable
+    # (architektura 7.1). curl ships in the full python:3.14 (buildpack-deps)
+    # image. Longer start_period: schema init + seed + bounded DB-connect retry.
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/stations"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
 
   frontend:
     # React SPA — Vite dev server (architektura sekce 8).
-    # healthchecks / depends_on are finalized in Phase 7.
     build:
       context: ./frontend
+    # Frontend talks to the backend API; wait until the backend serves.
+    depends_on:
+      backend:
+        condition: service_healthy
     environment:
       # Backend URL as seen from the browser; consumed via VITE_API_URL.
       VITE_API_URL: ${API_URL:-http://localhost:3000}
@@ -74,6 +114,13 @@ services:
       - "8080:8080"
     networks:
       - cpo-net
+    # node:22-alpine has no curl; busybox wget probes the Vite dev server.
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8080"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   station-1:
     <<: *station-common
@@ -128,3 +175,5 @@ networks:
 volumes:
   mosquitto-data:
   mosquitto-log:
+  # Persistent Postgres data — survives `docker compose down` (without -v).
+  cpo-db-data:
