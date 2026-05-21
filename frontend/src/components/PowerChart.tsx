@@ -1,6 +1,7 @@
 // Dual-axis power / energy chart for the station detail view (architektura 8.4).
 // Left axis: instantaneous power (kW, blue). Right axis: cumulative energy
-// (Wh, green) for the current or last session.
+// (kWh, green) for the current or last session. Meter readings carry energy in
+// Wh (integer); converted to kWh here for consistency with the sessions table.
 
 import {
   CartesianGrid,
@@ -31,7 +32,8 @@ export default function PowerChart({ readings }: PowerChartProps) {
   const data = readings.map((r) => ({
     time: formatClock(r.ts),
     power_kw: r.power_kw,
-    energy_wh: r.energy_wh,
+    // Wh -> kWh; energy_wh is an integer, so the division is exact to 3 dp.
+    energy_kwh: r.energy_wh / 1000,
   }));
 
   return (
@@ -49,7 +51,7 @@ export default function PowerChart({ readings }: PowerChartProps) {
             yAxisId="energy"
             orientation="right"
             tick={{ fontSize: 11 }}
-            label={{ value: "Wh", angle: 90, position: "insideRight", fontSize: 11 }}
+            label={{ value: "kWh", angle: 90, position: "insideRight", fontSize: 11 }}
           />
           <Tooltip />
           <Legend />
@@ -65,8 +67,8 @@ export default function PowerChart({ readings }: PowerChartProps) {
           <Line
             yAxisId="energy"
             type="monotone"
-            dataKey="energy_wh"
-            name="Energy (Wh)"
+            dataKey="energy_kwh"
+            name="Energy (kWh)"
             stroke="#22c55e"
             dot={false}
             isAnimationActive={false}

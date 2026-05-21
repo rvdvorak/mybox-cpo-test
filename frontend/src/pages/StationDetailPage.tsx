@@ -118,7 +118,9 @@ export default function StationDetailPage() {
                 />
                 <Field
                   label="Energy"
-                  value={`${detail.active_session.energy_wh} Wh`}
+                  value={`${(detail.active_session.energy_wh / 1000).toFixed(
+                    3,
+                  )} kWh`}
                 />
                 <Field
                   label="Duration"
@@ -137,7 +139,7 @@ export default function StationDetailPage() {
             to={`/stations/${stationId}/sessions`}
             className="mt-5 inline-block text-sm text-blue-600 hover:underline"
           >
-            Zobrazit historii sessions →
+            View session history →
           </Link>
         </>
       )}
