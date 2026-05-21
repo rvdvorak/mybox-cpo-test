@@ -735,5 +735,5 @@ Bottom-up s rychlou validací po každém kroku:
 5. **Backend REST + SSE** — endpointy nad existující DB, SSE stream.
 6. **Frontend** — nad hotovým backend API; nejdřív dashboard, pak detail, pak sessions.
 7. **Docker Compose finalizace** — healthchecks, depends_on, volumes.
-8. **README + DESIGN.md** — průběžné poznámky, finalizace na konci.
-9. **End-to-end test** — `docker compose up` a klikání podle README.
+8. **End-to-end test a ladění** — `docker compose up` (reálný compose), ověření všech hard requirements end-to-end; chyby odhalené E2E se ladí.
+9. **README + DESIGN.md** — finalizace dokumentace; README sekce „Test" jako přepis ověřeného E2E z kroku 8.

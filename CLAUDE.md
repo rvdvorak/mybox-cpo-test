@@ -38,8 +38,8 @@ Postupuj fázi po fázi podle `@docs/architektura.md` sekce 11 (Implementační 
 5. Backend REST + SSE
 6. Frontend (3 obrazovky)
 7. Docker Compose finalizace (healthchecks, depends_on, volumes)
-8. README + DESIGN.md
-9. End-to-end test
+8. End-to-end test a ladění
+9. README + DESIGN.md
 
 **Mezi fázemi:** verifikace přes `e2e-runner` (viz níže) → commit → `/clear` pro čistý kontext. Důležitý stav je v souborech, ne v paměti.
 
@@ -51,13 +51,13 @@ Každá fáze končí deterministickou verifikací přes subagenta `e2e-runner` 
 - **Povinný poslední krok každé fáze:** po napsání verify skriptu dispatchni subagenta `e2e-runner` (Task tool, `subagent_type: e2e-runner`) a předej mu číslo fáze + schválený předimplementační plán. Subagent provede stage 1 (nezávislé posouzení shody implementace s plánem) → stage 2 (deterministický E2E test) a vrátí `STATUS: PASS | FAIL | DEVIATION | ERROR`. Teprve s jeho verdiktem ohlas *"Fáze X hotová, k inspekci"* + výsledek.
 - Subagent na `FAIL`/`DEVIATION` jen reportuje — neopravuje (pravidlo 2). Vrať se k uživateli.
 - **Uživatel verdikt posoudí** a provede manuální commit, nebo intervenci. `e2e-runner` nikdy nestageuje/necommituje — verifikace je brána *před* manuálním commitem uživatele (pravidlo 6).
-- `scripts/verify/` jsou **operační verifikační skripty, NE automatizovaná test suite** — cvičí běžící systém (docker compose, mosquitto, curl, psql) a zasévají README sekci "Test" (Fáze 8). Hlavní vlákno verifikaci nespouští inline — vždy deleguje na subagenta.
+- `scripts/verify/` jsou **operační verifikační skripty, NE automatizovaná test suite** — cvičí běžící systém (docker compose, mosquitto, curl, psql) a zasévají README sekci "Test" (Fáze 9). Hlavní vlákno verifikaci nespouští inline — vždy deleguje na subagenta.
 - Manuální re-run po opravě: `/verify-phase N`.
 
 ## Co NEDĚLAT
 
 - Nepouštět se do bonusů (OCPP, advanced dashboard, tests, auth, rate limiting, tarify, monitoring) — viz Pravidla bod 3.
-- **Negenerovat automated testy.** Doménová vrstva (architektura sekce 5.1) je strukturně testovatelná, ale testy se v MVP nepíšou. Manual test scenarios přijdou do README ve Fázi 8 (architektura sekce 11 krok 8). *Pozn.: `scripts/verify/` (operační verifikační skripty psané na konci každé fáze) nejsou test suite — viz sekce "Verifikace mezi fázemi".*
+- **Negenerovat automated testy.** Doménová vrstva (architektura sekce 5.1) je strukturně testovatelná, ale testy se v MVP nepíšou. Manual test scenarios přijdou do README ve Fázi 9 (architektura sekce 11 krok 9). *Pozn.: `scripts/verify/` (operační verifikační skripty psané na konci každé fáze) nejsou test suite — viz sekce "Verifikace mezi fázemi".*
 - Nepřidávat dependencies bez vysvětlení (proč zrovna ta knihovna, jaká byla alternativa).
 - Nesahat na `.env` — jen `.env.example`. Uživatel si vyrobí `.env` ručně.
 - Nepoužívat `tailwind.config.js` — Tailwind v4 používá CSS-first config přes `@import "tailwindcss"` a `@theme` direktivu v hlavním CSS souboru. Tohle je častá chyba z training dat.
@@ -68,7 +68,7 @@ Každá fáze končí deterministickou verifikací přes subagenta `e2e-runner` 
 
 ## Obsah README
 
-README.md je hard requirement z `TASK.md`. Píše se ve Fázi 8 (architektura sekce 11). Musí obsahovat:
+README.md je hard requirement z `TASK.md`. Píše se ve Fázi 9 (architektura sekce 11). Musí obsahovat:
 
 - **Setup**: prerequisites (Docker, Docker Compose), klonování repa, `cp .env.example .env`.
 - **Run**: jediný `docker compose up` (případně `-d` flag), očekávané URLs (frontend na `http://localhost:8080`, backend API na `http://localhost:3000`).
@@ -84,7 +84,7 @@ Tón: technický, věcný, instrukční. Žádný marketing, žádné "vítejte 
 
 ## Tón DESIGN.md (až přijde čas)
 
-DESIGN.md bude psaný **až nakonec** (ve Fázi 8 z architektury sekce 11), buď přes subagent `design-doc-writer`, nebo manuálně. Pravidla pro tón:
+DESIGN.md bude psaný **až nakonec** (ve Fázi 9 z architektury sekce 11), buď přes subagent `design-doc-writer`, nebo manuálně. Pravidla pro tón:
 
 - Sebekritická reflexe vlastního řešení, ne strategický rámec pro firmu.
 - Identifikace tradeoffs (zvolil X, zvažoval Y, slabina je Z).
