@@ -1,3 +1,18 @@
+# Shared station service definition (architektura 9, 10.2).
+x-station-common: &station-common
+  build:
+    context: ./simulator
+  networks:
+    - cpo-net
+
+# ENV common to every station; per-service overrides follow (architektura 10.1).
+x-station-env: &station-env
+  MQTT_HOST: mosquitto
+  MQTT_PORT: 1883
+  FAULT_RECOVERY_SEC: 30
+  CONNECTOR_TYPE: AC
+  FIRMWARE_VERSION: 1.0.0
+
 services:
   mosquitto:
     # MQTT broker - Eclipse Mosquitto (architektura sekce 2, 3.7)
@@ -10,6 +25,52 @@ services:
       - mosquitto-log:/mosquitto/log
     networks:
       - cpo-net
+
+  station-1:
+    <<: *station-common
+    environment:
+      <<: *station-env
+      STATION_ID: ST-001
+      MAX_POWER_KW: 22.0
+      FAULT_PROBABILITY: 0.02
+      MONITORING_AGENT: none
+
+  station-2:
+    <<: *station-common
+    environment:
+      <<: *station-env
+      STATION_ID: ST-002
+      MAX_POWER_KW: 11.0
+      FAULT_PROBABILITY: 0.02
+      MONITORING_AGENT: rpi
+
+  station-3:
+    <<: *station-common
+    environment:
+      <<: *station-env
+      STATION_ID: ST-003
+      MAX_POWER_KW: 22.0
+      # Demo fault station - high fault probability (architektura 10.2).
+      FAULT_PROBABILITY: 0.30
+      MONITORING_AGENT: none
+
+  station-4:
+    <<: *station-common
+    environment:
+      <<: *station-env
+      STATION_ID: ST-004
+      MAX_POWER_KW: 22.0
+      FAULT_PROBABILITY: 0.02
+      MONITORING_AGENT: none
+
+  station-5:
+    <<: *station-common
+    environment:
+      <<: *station-env
+      STATION_ID: ST-005
+      MAX_POWER_KW: 7.4
+      FAULT_PROBABILITY: 0.02
+      MONITORING_AGENT: none
 
 networks:
   cpo-net:
