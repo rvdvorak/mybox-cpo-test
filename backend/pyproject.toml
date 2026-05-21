@@ -23,4 +23,4 @@ packages = ["backend", "backend.domain", "backend.db", "backend.adapters"]
 
 [tool.ruff]
 line-length = 88
-target-version = "py314"
+target-version = "py313"

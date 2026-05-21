@@ -77,9 +77,7 @@ class Session(Base):
 class MeterReading(Base):
     __tablename__ = "meter_readings"
 
-    id: Mapped[int] = mapped_column(
-        BigInteger, primary_key=True, autoincrement=True
-    )
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     session_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("sessions.id"), nullable=True
     )

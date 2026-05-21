@@ -192,7 +192,9 @@ class StationStateMachine:
                 Effect(EFFECT_STATUS, status=State.FAULTED, error_code=self.error_code)
             ]
 
-        power_kw = self.max_power_kw * self.rng.uniform(POWER_NOISE_MIN, POWER_NOISE_MAX)
+        power_kw = self.max_power_kw * self.rng.uniform(
+            POWER_NOISE_MIN, POWER_NOISE_MAX
+        )
         self.energy_wh += power_kw * (METER_INTERVAL_SEC / 3600.0) * 1000.0
         return [Effect(EFFECT_METER, power_kw=power_kw, energy_wh=self.energy_wh)]
 

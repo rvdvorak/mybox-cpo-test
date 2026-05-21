@@ -228,9 +228,7 @@ class StationInstance:
             "max_power_kw": self.config.max_power_kw,
             "monitoring_agent": self.config.monitoring_agent,
         }
-        await client.publish(
-            self._topics.boot, json.dumps(payload), qos=1, retain=True
-        )
+        await client.publish(self._topics.boot, json.dumps(payload), qos=1, retain=True)
 
     async def _publish_status(self, client: Client) -> None:
         """Status — retained, QoS 1. Reflects the current state machine state."""
