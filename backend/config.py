@@ -9,10 +9,7 @@ from decimal import Decimal
 
 @dataclass(frozen=True)
 class BackendConfig:
-    """Immutable backend configuration.
-
-    MQTT settings are intentionally absent — the MQTT adapter arrives in Phase 4.
-    """
+    """Immutable backend configuration."""
 
     db_host: str
     db_port: int
@@ -21,6 +18,11 @@ class BackendConfig:
     db_password: str
     price_per_kwh: Decimal
     backend_port: int
+    mqtt_host: str
+    mqtt_port: int
+    # Heartbeat age after which the offline detector marks a station Offline
+    # (architektura 3.5).
+    heartbeat_timeout_sec: int
 
     @classmethod
     def from_env(cls) -> "BackendConfig":
@@ -38,6 +40,11 @@ class BackendConfig:
             # Decimal (not float) — total_cost rounding must be exact (architektura 5.2).
             price_per_kwh=Decimal(os.environ.get("PRICE_PER_KWH", "5.50")),
             backend_port=int(os.environ.get("BACKEND_PORT", "3000")),
+            mqtt_host=os.environ.get("MQTT_HOST", "mosquitto"),
+            mqtt_port=int(os.environ.get("MQTT_PORT", "1883")),
+            heartbeat_timeout_sec=int(
+                os.environ.get("HEARTBEAT_TIMEOUT_SEC", "90")
+            ),
         )
 
     @property

@@ -86,6 +86,23 @@ class SessionService:
             )
             return None
 
+        # Deduplicate in the application layer (architektura 3.2): a QoS 1
+        # meter message may be redelivered. Keyed on (session_id, ts) — no
+        # unique constraint, that would be a schema deviation.
+        duplicate = await db.scalar(
+            select(MeterReading.id).where(
+                MeterReading.session_id == active.id,
+                MeterReading.ts == event.ts,
+            )
+        )
+        if duplicate is not None:
+            logger.info(
+                "Duplicate meter reading for session %s at %s, skipping",
+                active.id,
+                event.ts,
+            )
+            return None
+
         reading = MeterReading(
             session_id=active.id,
             station_id=event.station_id,

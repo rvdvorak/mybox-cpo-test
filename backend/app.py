@@ -1,8 +1,9 @@
-"""FastAPI application — Phase 3 carries only startup wiring, no routes.
+"""FastAPI application — startup wiring; REST/SSE routes arrive in Phase 5.
 
 The lifespan handler runs idempotent schema init + station seeding (architektura
-6.3) and exposes the engine, session factory and ``SessionService`` on
-``app.state`` for the adapters added in Phases 4 and 5.
+6.3), exposes the engine, session factory and ``SessionService`` on
+``app.state``, and runs the MQTT adapter + offline detector as background tasks
+(architektura 3.5, 5.1).
 """
 
 from __future__ import annotations
@@ -14,6 +15,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from sqlalchemy import text
 
+from .adapters.mqtt_adapter import run_mqtt_adapter, run_offline_detector
 from .config import BackendConfig
 from .db.engine import build_engine, build_sessionmaker
 from .db.schema import init_schema, seed_stations
@@ -57,14 +59,27 @@ async def lifespan(app: FastAPI):
     await init_schema(engine)
     await seed_stations(sessionmaker)
 
+    session_service = SessionService(FlatRatePricing(config.price_per_kwh))
     app.state.config = config
     app.state.engine = engine
     app.state.sessionmaker = sessionmaker
-    app.state.session_service = SessionService(FlatRatePricing(config.price_per_kwh))
+    app.state.session_service = session_service
+
+    # Background tasks: ingest the MQTT station stream and sweep for stale
+    # heartbeats. Started after the schema + seed so station rows already exist.
+    tasks = [
+        asyncio.create_task(
+            run_mqtt_adapter(config, sessionmaker, session_service)
+        ),
+        asyncio.create_task(run_offline_detector(config, sessionmaker)),
+    ]
     logger.info("Backend startup complete")
 
     yield
 
+    for task in tasks:
+        task.cancel()
+    await asyncio.gather(*tasks, return_exceptions=True)
     await engine.dispose()
 
 

@@ -39,7 +39,8 @@ services:
       - cpo-net
 
   backend:
-    # FastAPI backend — domain layer + DB schema (architektura sekce 5, 6).
+    # FastAPI backend — domain layer + DB schema + MQTT adapter
+    # (architektura sekce 3, 5, 6).
     # healthchecks / depends_on / volumes are finalized in Phase 7.
     build:
       context: ./backend
@@ -51,6 +52,9 @@ services:
       DB_PASSWORD: cpo
       BACKEND_PORT: 3000
       PRICE_PER_KWH: 5.50
+      MQTT_HOST: mosquitto
+      MQTT_PORT: 1883
+      HEARTBEAT_TIMEOUT_SEC: 90
     ports:
       - "3000:3000"
     networks:
