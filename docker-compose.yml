@@ -62,6 +62,19 @@ services:
     networks:
       - cpo-net
 
+  frontend:
+    # React SPA — Vite dev server (architektura sekce 8).
+    # healthchecks / depends_on are finalized in Phase 7.
+    build:
+      context: ./frontend
+    environment:
+      # Backend URL as seen from the browser; consumed via VITE_API_URL.
+      VITE_API_URL: ${API_URL:-http://localhost:3000}
+    ports:
+      - "8080:8080"
+    networks:
+      - cpo-net
+
   station-1:
     <<: *station-common
     environment:
