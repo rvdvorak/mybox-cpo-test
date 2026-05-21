@@ -25,21 +25,26 @@ Systém se skládá z devíti služeb orchestrovaných přes Docker Compose:
 
 ## 2. Technologický stack
 
-| Vrstva | Volba |
-|---|---|
-| Backend jazyk | Python 3.14 |
-| Backend framework | FastAPI |
-| MQTT klient (backend i simulátor) | aiomqtt |
-| Databáze | PostgreSQL 18 |
-| ORM | SQLAlchemy 2.0 (async) |
-| Simulátor | Python + aiomqtt |
-| Frontend framework | React 19 + Vite |
-| Frontend styling | Tailwind v4 (CSS-first config přes `@import "tailwindcss"` a `@theme`) |
-| Frontend jazyk | TypeScript (pragmatická strictness, viz sekce 8 prolog) |
-| Frontend charts | Recharts |
-| Frontend ikony | `@tabler/icons-react` |
-| Frontend realtime | Server-Sent Events (SSE) |
-| MQTT broker | Eclipse Mosquitto 2.1 |
+| Vrstva | Volba | Verze |
+|---|---|---|
+| Backend jazyk | Python | 3.14 |
+| Backend framework | FastAPI | ^0.136 |
+| MQTT klient (backend i simulátor) | aiomqtt | ^2.4 |
+| Databáze | PostgreSQL | 18-alpine |
+| ORM | SQLAlchemy (async) | ^2.0 |
+| DB driver | asyncpg | ^0.30 |
+| Simulátor | Python + aiomqtt | viz výše |
+| Frontend framework | React | ^19.2 |
+| Frontend build | Vite | ^8.0 |
+| Frontend styling | Tailwind CSS (CSS-first config přes `@import "tailwindcss"` a `@theme`) | ^4.3 |
+| Frontend jazyk | TypeScript (pragmatická strictness, viz sekce 8 prolog) | ^5.9 |
+| Frontend charts | Recharts | ^3.8 |
+| Frontend ikony | `@tabler/icons-react` | ^3.44 |
+| Frontend router | `react-router-dom` (v6-style API patterns) | ^7 |
+| Frontend realtime | Server-Sent Events (SSE) | — |
+| MQTT broker | Eclipse Mosquitto | 2.1-alpine |
+| Python toolchain | ruff (format + lint) | ^0.15 |
+| Frontend toolchain | prettier | ^3.8 |
 
 ---
 
@@ -491,7 +496,7 @@ Zbytek typů jde přes inference. Žádné generics nad nezbytné minimum, žád
 
 ### 8.1 Routes
 
-React Router DOM v6, tři routes:
+React Router DOM v7 (zachované v6-style API patterns: `<Routes>`, `<Route>`, `useNavigate`, `useParams`), tři routes:
 
 ```
 /                       — Dashboard (live tabulka 5 stanic)

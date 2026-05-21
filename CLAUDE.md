@@ -4,11 +4,12 @@ Greenfield projekt podle `TASK.md`. **Architektura je zafixovaná** — viz `@do
 
 ## Stack (závazné, neproměňovat)
 
-- Backend: **Python 3.14 + FastAPI + aiomqtt + SQLAlchemy 2.0 async**
-- DB: **PostgreSQL 18** (čistá, žádné TimescaleDB v MVP)
-- Frontend: **React 19 + Vite + TypeScript + Tailwind v4 + Recharts** (pragmatická TS strictness, ne strict mode)
-- MQTT broker: **Eclipse Mosquitto 2.1**
-- Simulátor: **Python + aiomqtt** (konzistence s backendem)
+- Backend: **Python 3.14 + FastAPI ^0.136 + aiomqtt ^2.4 + SQLAlchemy ^2.0 async + asyncpg ^0.30**
+- DB: **PostgreSQL 18-alpine** (čistá, žádné TimescaleDB v MVP)
+- Frontend: **React ^19.2 + Vite ^8.0 + TypeScript ^5.9 + Tailwind ^4.3 + Recharts ^3.8 + @tabler/icons-react ^3.44 + react-router-dom ^7** (pragmatická TS strictness, ne strict mode)
+- MQTT broker: **Eclipse Mosquitto 2.1-alpine**
+- Simulátor: **Python 3.14 + aiomqtt ^2.4** (konzistence s backendem)
+- Toolchain: **ruff ^0.15** (Python), **prettier ^3.8** (TS/JSX/CSS)
 
 ## Pravidla práce
 
