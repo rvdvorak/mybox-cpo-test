@@ -76,7 +76,7 @@ README.md je hard requirement z `TASK.md`. Píše se ve Fázi 9 (architektura se
   - Jak vyzkoušet start/stop session přes UI (klik na stanici → Start → sledovat status změnu → Stop).
   - Jak vyzkoušet start/stop session přes API (`curl` examples s expected response).
   - Jak ověřit MQTT komunikaci přes `mosquitto_sub -h localhost -t '#' -v`.
-  - Jak ověřit offline detection (zastavit jeden simulator container → po 90 s status `Offline` v UI).
+  - Jak ověřit offline detection (zastavit jeden simulator container → status `Offline` v UI; přes graceful shutdown / LWT je Offline prakticky okamžitě, 90s heartbeat-timeout je jen záloha pro nedoručený LWT — nepsat „po 90 s").
   - Jak ověřit fault scenarios (station-3 má `FAULT_PROBABILITY=0.30` z architektury 10.2).
 - **Architecture**: krátký odkaz na `docs/architektura.md`, žádné duplikování obsahu.
 
