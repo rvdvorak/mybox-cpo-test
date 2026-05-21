@@ -1,55 +1,13 @@
-# Startovací kostra docker-compose.yml pro Mini CPO Platform
-#
-# Doplň: image / build / command / volumes / depends_on dle své architektury.
-# Mosquitto je předepsaný (lightweight, zero-config). Vše ostatní je tvoje volba.
-#
-# Cíl: po `docker compose up` musí naběhnout celý systém out-of-the-box.
-
 services:
   mosquitto:
-    # MQTT broker - předepsaný Mosquitto
-    # Doplň: image (např. eclipse-mosquitto:2), ports (1883, případně 9001 pro WS),
-    # volumes pro config (./mosquitto/config:/mosquitto/config)
-    networks:
-      - cpo-net
-
-  db:
-    # Databáze - tvoje volba (Postgres / MySQL / Mongo / InfluxDB / kombinace)
-    # Doplň: image, environment, volumes pro persist
-    networks:
-      - cpo-net
-
-  backend:
-    # Backend - REST API + MQTT subscriber + session lifecycle
-    # Doplň: build context (./backend), environment, depends_on (mosquitto, db), ports
-    networks:
-      - cpo-net
-
-  frontend:
-    # Frontend dashboard - live view + detail + sessions history
-    # Doplň: build context (./frontend), environment, ports
-    networks:
-      - cpo-net
-
-  station-1:
-    # Simulátor stanice #1
-    # Doplň: build context (./simulator), environment (STATION_ID, MAX_POWER_KW, FAULT_PROBABILITY), depends_on (mosquitto)
-    networks:
-      - cpo-net
-
-  station-2:
-    networks:
-      - cpo-net
-
-  station-3:
-    networks:
-      - cpo-net
-
-  station-4:
-    networks:
-      - cpo-net
-
-  station-5:
+    # MQTT broker - Eclipse Mosquitto (architektura sekce 2, 3.7)
+    image: eclipse-mosquitto:2.1-alpine
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config:ro
+      - mosquitto-data:/mosquitto/data
+      - mosquitto-log:/mosquitto/log
     networks:
       - cpo-net
 
@@ -57,6 +15,6 @@ networks:
   cpo-net:
     driver: bridge
 
-# volumes:
-#   db-data:
-#   mosquitto-data:
+volumes:
+  mosquitto-data:
+  mosquitto-log:

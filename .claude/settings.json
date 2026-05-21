@@ -88,10 +88,8 @@
       "Read(~/.git-credentials)",
       "Read(~/.ssh/**)",
       "Read(~/.gnupg/**)",
-      "Edit(~/.claude/**)",
       "Edit(~/.git-credentials)",
       "Edit(~/.ssh/**)",
-      "Write(~/.claude/**)",
 
       "Bash(sudo:*)",
       "Bash(rm -rf:*)",
