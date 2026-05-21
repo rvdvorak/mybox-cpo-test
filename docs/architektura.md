@@ -33,7 +33,9 @@ Systém se skládá z devíti služeb orchestrovaných přes Docker Compose:
 | Databáze | PostgreSQL | 18-alpine |
 | ORM | SQLAlchemy (async) | ^2.0 |
 | DB driver | asyncpg | ^0.30 |
+| Backend Docker image | `python:3.14` — plný, **NE `-slim`** (asyncpg nemá `cp314` wheel, kompiluje ze zdroje) | — |
 | Simulátor | Python + aiomqtt | viz výše |
+| Simulátor Docker image | `python:3.14-slim` — `-slim` stačí, jen pure-Python deps | — |
 | Frontend framework | React | ^19.2 |
 | Frontend build | Vite | ^8.0 |
 | Frontend styling | Tailwind CSS (CSS-first config přes `@import "tailwindcss"` a `@theme`) | ^4.3 |

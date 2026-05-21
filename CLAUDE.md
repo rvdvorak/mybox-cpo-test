@@ -9,6 +9,7 @@ Greenfield projekt podle `TASK.md`. **Architektura je zafixovaná** — viz `@do
 - Frontend: **React ^19.2 + Vite ^8.0 + TypeScript ^5.9 + Tailwind ^4.3 + Recharts ^3.8 + @tabler/icons-react ^3.44 + react-router-dom ^7** (pragmatická TS strictness, ne strict mode)
 - MQTT broker: **Eclipse Mosquitto 2.1-alpine**
 - Simulátor: **Python 3.14 + aiomqtt ^2.4** (konzistence s backendem)
+- Docker base image (backend): **`python:3.14`** — plný image, **NE `-slim`**. `asyncpg ^0.30` zatím nemá `cp314` wheel a kompiluje se ze zdroje; `-slim` nemá C toolchain ani libc hlavičky a build selže. Simulátor má jen pure-Python závislost (`aiomqtt`), jeho image proto zůstává `python:3.14-slim`.
 - Toolchain: **ruff ^0.15** (Python), **prettier ^3.8** (TS/JSX/CSS)
 
 ## Pravidla práce

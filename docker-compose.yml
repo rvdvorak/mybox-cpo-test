@@ -26,6 +26,36 @@ services:
     networks:
       - cpo-net
 
+  db:
+    # PostgreSQL — clean, no TimescaleDB in MVP (architektura sekce 2, 6).
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: cpo
+      POSTGRES_USER: cpo
+      POSTGRES_PASSWORD: cpo
+    ports:
+      - "5432:5432"
+    networks:
+      - cpo-net
+
+  backend:
+    # FastAPI backend — domain layer + DB schema (architektura sekce 5, 6).
+    # healthchecks / depends_on / volumes are finalized in Phase 7.
+    build:
+      context: ./backend
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: cpo
+      DB_USER: cpo
+      DB_PASSWORD: cpo
+      BACKEND_PORT: 3000
+      PRICE_PER_KWH: 5.50
+    ports:
+      - "3000:3000"
+    networks:
+      - cpo-net
+
   station-1:
     <<: *station-common
     environment:

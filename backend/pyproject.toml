@@ -1,0 +1,25 @@
+[project]
+name = "cpo-backend"
+version = "0.1.0"
+description = "Backend for the Mini CPO Platform — domain layer, DB schema, MQTT/REST adapters"
+requires-python = ">=3.14"
+# Phase 3 dependencies. aiomqtt is intentionally absent — it is added in Phase 4
+# where the MQTT adapter actually uses it.
+dependencies = [
+    "fastapi>=0.136,<0.137",
+    "sqlalchemy[asyncio]>=2.0,<3.0",
+    "asyncpg>=0.30,<0.31",
+    "uvicorn>=0.34,<0.40",
+    "pydantic>=2.0,<3.0",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["backend", "backend.domain", "backend.db"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py314"
